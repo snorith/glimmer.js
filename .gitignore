@@ -1,26 +1,67 @@
-dist
+# Dependencies
+node_modules/
 
-/.node
+# Build output
+dist/
 
-# See https://help.github.com/ignore-files/ for more about ignoring files.
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# compiled output
-/dist/
-/tmp/
-
-# dependencies
-**/node_modules/**
-**/tmp/**
-
-# misc
-/.sass-cache
-/connect.lock
-/coverage/
-/libpeerconnection.log
-/npm-debug.log*
-/testem.log
-/yarn-error.log
+# Cache
 .eslintcache
+.cache/
+.parcel-cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Windows
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Editors — JetBrains (WebStorm, IntelliJ, etc.)
+.idea/
+
+# Editors — VS Code
+.vscode/
+
+# Editors — Vim/Neovim
+*.swp
+*.swo
+*~
+
+# Editors — Emacs
+\#*\#
+.\#*
+
+# Editors — Sublime Text
+*.sublime-workspace
+
+# TypeScript
+*.tsbuildinfo
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Test output
+coverage/
 
 # ember-try
 **/.node_modules.ember-try/**
