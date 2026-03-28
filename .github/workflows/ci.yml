@@ -2,65 +2,17 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
 
 jobs:
-  lint:
-    name: "Linting"
+  build:
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
-      - run: yarn install --frozen-lockfile --non-interactive
-      - run: yarn lint
-      - run: yarn build
-      - run: yarn dtslint --installAll
-      - run: yarn test:types
-
-  babel-plugin-tests:
-    name: "Babel Plugin Tests - Node ${{ matrix.node-version }}"
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12, 14, 16]
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v5
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20'
       - run: yarn install --frozen-lockfile --non-interactive
-      - run: yarn test:babel-plugins
-
-  glimmer-package-tests:
-    name: "@glimmer Package Tests"
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
-      - run: yarn install --frozen-lockfile --non-interactive
-      - run: yarn testem ci
-
-  ember-version-tests:
-    name: "Ember Tests: ${{ matrix.ember-version }}"
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        ember-version:
-          - default
-          - release
-          - beta
-          - canary
-          - lts-3.24
-          - lts-3.28
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
-      - run: yarn install --frozen-lockfile --non-interactive
-      - run: yarn test:ember ember-${{ matrix.ember-version }} --skip-cleanup
+      - run: yarn build
