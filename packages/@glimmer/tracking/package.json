@@ -1,14 +1,13 @@
 {
-  "name": "@glimmer/tracking",
-  "version": "2.0.0-beta.21",
+  "name": "@norith/glimmer-tracking",
+  "version": "1.0.0",
   "description": "Glimmer property tracking library",
   "keywords": [
     "ember-addon"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/glimmerjs/glimmer.js",
-    "directory": "packages/@glimmer/tracking"
+    "url": "https://github.com/snorith/glimmer.js.git"
   },
   "license": "MIT",
   "contributors": [
@@ -35,8 +34,8 @@
   "ember-addon": {
     "main": "ember-addon-main.js"
   },
-  "volta": {
-    "node": "12.16.1",
-    "yarn": "1.22.4"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

@@ -1,4 +1,4 @@
-import { precompileTemplate } from '@glimmer/core';
+import { precompileTemplate } from '@norith/glimmer-core';
 
 import { test, render } from '../utils';
 

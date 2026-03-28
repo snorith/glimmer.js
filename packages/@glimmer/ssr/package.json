@@ -1,8 +1,11 @@
 {
-  "name": "@glimmer/ssr",
-  "version": "2.0.0-beta.21",
+  "name": "@norith/glimmer-ssr",
+  "version": "1.0.0",
   "description": "Server-side rendering for Glimmer Applications",
-  "repository": "https://github.com/glimmerjs/glimmer.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snorith/glimmer.js.git"
+  },
   "license": "MIT",
   "files": [
     "dist"
@@ -10,7 +13,7 @@
   "main": "dist/commonjs/index.js",
   "module": "dist/modules/index.js",
   "dependencies": {
-    "@glimmer/core": "2.0.0-beta.21",
+    "@norith/glimmer-core": "1.0.0",
     "@glimmer/node": "0.84.0",
     "@glimmer/reference": "0.84.0",
     "@glimmer/runtime": "0.84.0",
@@ -20,10 +23,10 @@
     "@simple-dom/void-map": "^1.4.0"
   },
   "devDependencies": {
-    "@glimmer/component": "2.0.0-beta.21"
+    "@norith/glimmer-component": "1.0.0"
   },
-  "volta": {
-    "node": "12.16.1",
-    "yarn": "1.22.4"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

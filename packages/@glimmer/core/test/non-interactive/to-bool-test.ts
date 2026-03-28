@@ -1,6 +1,6 @@
-import Component from '@glimmer/component';
+import Component from '@norith/glimmer-component';
 
-import { setComponentTemplate, precompileTemplate } from '@glimmer/core';
+import { setComponentTemplate, precompileTemplate } from '@norith/glimmer-core';
 
 import { test, render } from '../utils';
 

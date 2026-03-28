@@ -1,4 +1,4 @@
-import { helperCapabilities, HelperManager, setHelperManager } from '@glimmer/core';
+import { helperCapabilities, HelperManager, setHelperManager } from '@norith/glimmer-core';
 import { Dict, Arguments } from '@glimmer/interfaces';
 
 type helperFunc<

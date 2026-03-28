@@ -1,8 +1,8 @@
-import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
+import Component from '@norith/glimmer-component';
+import { tracked } from '@norith/glimmer-tracking';
 
-import { setComponentTemplate, precompileTemplate } from '@glimmer/core';
-import { test, render, settled } from '@glimmer/core/test/utils';
+import { setComponentTemplate, precompileTemplate } from '@norith/glimmer-core';
+import { test, render, settled } from '@norith/glimmer-core/test/utils';
 
 QUnit.module('[@glimmer/component] Component Arguments', () => {
   test('Getters that depend on `args` re-render correctly', async function (assert) {

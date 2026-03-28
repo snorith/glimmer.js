@@ -1,4 +1,4 @@
-import { renderToString } from '@glimmer/ssr';
+import { renderToString } from '@norith/glimmer-ssr';
 import StaticComponent from './src/StaticComponent';
 
 interface ExpressResponse {

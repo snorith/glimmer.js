@@ -1,7 +1,7 @@
 import { DEBUG } from '@glimmer/env';
-import { assert, deprecate } from '@glimmer/debug';
-import { precompileTemplate } from '@glimmer/core';
-import { tracked } from '@glimmer/tracking';
+import { assert, deprecate } from '@norith/glimmer-debug';
+import { precompileTemplate } from '@norith/glimmer-core';
+import { tracked } from '@norith/glimmer-tracking';
 
 if (DEBUG) {
   console.log('DEBUG!');

@@ -1,4 +1,4 @@
-import { componentCapabilities } from '@glimmer/core';
+import { componentCapabilities } from '@norith/glimmer-core';
 
 import BaseComponentManager from '../addon/-private/base-component-manager';
 import GlimmerComponent, { setDestroying, setDestroyed } from '../addon/-private/component';

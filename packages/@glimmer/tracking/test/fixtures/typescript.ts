@@ -1,4 +1,4 @@
-import { cached, tracked } from '@glimmer/tracking';
+import { cached, tracked } from '@norith/glimmer-tracking';
 
 export class Tom {
   @tracked firstName = 'Tom';

@@ -11,12 +11,12 @@
     "build": "webpack"
   },
   "dependencies": {
-    "@glimmer/core": "^1.0.0",
-    "@glimmer/component": "^1.0.0",
-    "@glimmer/tracking": "^1.0.0",
-    "@glimmer/helper": "^1.0.0",
-    "@glimmer/modifier": "^1.0.0",
-    "@glimmer/ssr": "^1.0.0"
+    "@norith/glimmer-core": "^1.0.0",
+    "@norith/glimmer-component": "^1.0.0",
+    "@norith/glimmer-tracking": "^1.0.0",
+    "@norith/glimmer-helper": "^1.0.0",
+    "@norith/glimmer-modifier": "^1.0.0",
+    "@norith/glimmer-ssr": "^1.0.0"
   },
   "volta": {
     "node": "12.16.1",

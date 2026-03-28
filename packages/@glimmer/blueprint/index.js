@@ -65,7 +65,7 @@ module.exports = {
     const indexTSPromise = this.insertIntoFile(
       'src/index.ts',
       "import initializeCustomElements from '@glimmer/web-component';",
-      { after: "import { setPropertyDidChange } from '@glimmer/tracking';\n" }
+      { after: "import { setPropertyDidChange } from '@norith/glimmer-tracking';\n" }
     ).then(() => {
       return this.insertIntoFile(
         'src/index.ts',

@@ -1,4 +1,4 @@
-import Component from '@glimmer/component';
+import Component from '@norith/glimmer-component';
 import { action, set, computed } from '@ember/object';
 
 export default class ConferenceSpeakers extends Component {

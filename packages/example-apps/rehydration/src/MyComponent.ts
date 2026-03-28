@@ -1,7 +1,7 @@
-import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
-import { precompileTemplate, setComponentTemplate } from '@glimmer/core';
-import { on, action } from '@glimmer/modifier';
+import Component from '@norith/glimmer-component';
+import { tracked } from '@norith/glimmer-tracking';
+import { precompileTemplate, setComponentTemplate } from '@norith/glimmer-core';
+import { on, action } from '@norith/glimmer-modifier';
 
 class MyComponent extends Component {
   @tracked count = 1;

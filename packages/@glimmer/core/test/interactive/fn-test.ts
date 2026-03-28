@@ -1,9 +1,9 @@
 import { test, render, settled, tracked } from '../utils';
-import Component from '@glimmer/component';
-import { fn } from '@glimmer/helper';
-import { on, action } from '@glimmer/modifier';
+import Component from '@norith/glimmer-component';
+import { fn } from '@norith/glimmer-helper';
+import { on, action } from '@norith/glimmer-modifier';
 
-import { setComponentTemplate, precompileTemplate, templateOnlyComponent } from '@glimmer/core';
+import { setComponentTemplate, precompileTemplate, templateOnlyComponent } from '@norith/glimmer-core';
 
 QUnit.module('[@glimmer/core] interactive - {{fn}}', () => {
   test('can curry arguments via fn', async function (assert) {

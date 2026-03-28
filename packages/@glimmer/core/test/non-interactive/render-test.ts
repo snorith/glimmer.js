@@ -1,14 +1,14 @@
-import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
+import Component from '@norith/glimmer-component';
+import { tracked } from '@norith/glimmer-tracking';
 
-import { on, action } from '@glimmer/modifier';
+import { on, action } from '@norith/glimmer-modifier';
 
 import {
   setComponentTemplate,
   precompileTemplate,
   getOwner,
   templateOnlyComponent,
-} from '@glimmer/core';
+} from '@norith/glimmer-core';
 
 import { test, render } from '../utils';
 

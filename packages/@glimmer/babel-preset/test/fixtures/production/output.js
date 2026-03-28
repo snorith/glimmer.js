@@ -1,6 +1,6 @@
 var _class, _descriptor, _dog, _cat;
 
-import { createTemplateFactory as _createTemplateFactory } from "@glimmer/core";
+import { createTemplateFactory as _createTemplateFactory } from "@norith/glimmer-core";
 
 function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -16,8 +16,8 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and runs after the decorators transform.'); }
 
-import { assert, deprecate } from '@glimmer/debug';
-import { tracked } from '@glimmer/tracking';
+import { assert, deprecate } from '@norith/glimmer-debug';
+import { tracked } from '@norith/glimmer-tracking';
 
 if (false
 /* DEBUG */

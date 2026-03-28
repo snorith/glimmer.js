@@ -1,6 +1,6 @@
 {
-  "name": "@glimmer/component",
-  "version": "2.0.0-beta.21",
+  "name": "@norith/glimmer-component",
+  "version": "1.0.0",
   "description": "Glimmer component library",
   "keywords": [
     "ember-addon"
@@ -17,7 +17,10 @@
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "https://github.com/glimmerjs/glimmer.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snorith/glimmer.js.git"
+  },
   "scripts": {
     "build": "ember build",
     "lint:js": "eslint .",
@@ -26,7 +29,7 @@
     "test:all": "ember try:each"
   },
   "dependencies": {
-    "@glimmer/core": "2.0.0-beta.21",
+    "@norith/glimmer-core": "1.0.0",
     "@glimmer/env": "^0.1.7",
     "@glimmer/util": "0.84.0",
     "broccoli-file-creator": "^2.1.1",
@@ -48,7 +51,7 @@
     "@glimmer/compiler": "0.84.0",
     "@glimmer/interfaces": "0.84.0",
     "@glimmer/resolver": "^0.4.3",
-    "@glimmer/tracking": "2.0.0-beta.21",
+    "@norith/glimmer-tracking": "1.0.0",
     "@glimmer/wire-format": "0.84.0",
     "@types/ember": "~4.0.0",
     "@types/ember-qunit": "~5.0.0",
@@ -105,8 +108,8 @@
     "defaultBlueprint": "install-glimmer-component",
     "main": "ember-addon-main.js"
   },
-  "volta": {
-    "node": "12.22.10",
-    "yarn": "1.22.4"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

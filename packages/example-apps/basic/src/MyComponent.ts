@@ -1,14 +1,14 @@
-import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
+import Component from '@norith/glimmer-component';
+import { tracked } from '@norith/glimmer-tracking';
 import {
   precompileTemplate,
   setComponentTemplate,
   getOwner,
   templateOnlyComponent,
-} from '@glimmer/core';
+} from '@norith/glimmer-core';
 import { helper } from './utils/helper-with-services';
 import OtherComponent from './OtherComponent';
-import { on, action } from '@glimmer/modifier';
+import { on, action } from '@norith/glimmer-modifier';
 import { Owner } from '..';
 
 const myHelper = helper(function ([name], { greeting }) {

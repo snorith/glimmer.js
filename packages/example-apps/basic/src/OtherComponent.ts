@@ -1,5 +1,5 @@
-import Component from '@glimmer/component';
-import { precompileTemplate, setComponentTemplate } from '@glimmer/core';
+import Component from '@norith/glimmer-component';
+import { precompileTemplate, setComponentTemplate } from '@norith/glimmer-core';
 
 export default class OtherComponent extends Component {}
 

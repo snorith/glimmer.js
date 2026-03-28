@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  name: '@glimmer/tracking',
+  name: '@norith/glimmer-tracking',
 };

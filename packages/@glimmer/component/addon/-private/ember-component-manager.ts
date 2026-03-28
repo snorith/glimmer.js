@@ -7,7 +7,7 @@ import { gte } from 'ember-compatibility-helpers';
 import BaseComponentManager from './base-component-manager';
 
 import GlimmerComponent, { setDestroyed, setDestroying } from './component';
-import { ComponentCapabilities } from '@glimmer/core';
+import { ComponentCapabilities } from '@norith/glimmer-core';
 import { Arguments } from '@glimmer/interfaces';
 
 const CAPABILITIES = gte('3.13.0-beta.1')

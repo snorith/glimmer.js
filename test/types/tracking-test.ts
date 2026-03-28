@@ -1,4 +1,4 @@
-import * as tracking from '@glimmer/tracking';
+import * as tracking from '@norith/glimmer-tracking';
 import { hasExactKeys } from './utils';
 
 hasExactKeys<{

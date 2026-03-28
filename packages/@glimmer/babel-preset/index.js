@@ -33,7 +33,7 @@ module.exports = function (api, options) {
           : require.resolve('babel-plugin-debug-macros'),
         {
           debugTools: {
-            source: '@glimmer/debug',
+            source: '@norith/glimmer-debug',
             isDebug,
           },
           externalizeHelpers: {
@@ -54,18 +54,25 @@ module.exports = function (api, options) {
           ensureModuleApiPolyfill: false,
           moduleOverrides: {
             '@ember/component/template-only': {
-              default: ['templateOnlyComponent', '@glimmer/core'],
+              default: ['templateOnlyComponent', '@norith/glimmer-core'],
             },
             '@ember/template-factory': {
-              createTemplateFactory: ['createTemplateFactory', '@glimmer/core'],
+              createTemplateFactory: ['createTemplateFactory', '@norith/glimmer-core'],
             },
             '@ember/component': {
-              setComponentTemplate: ['setComponentTemplate', '@glimmer/core'],
+              setComponentTemplate: ['setComponentTemplate', '@norith/glimmer-core'],
             },
           },
           modules: {
             ...__customInlineTemplateModules,
+            // Support both original and renamed import paths
+            // (consumer apps may use npm aliases to keep '@glimmer/core')
             '@glimmer/core': {
+              export: 'precompileTemplate',
+              disableTemplateLiteral: true,
+              shouldParseScope: true,
+            },
+            '@norith/glimmer-core': {
               export: 'precompileTemplate',
               disableTemplateLiteral: true,
               shouldParseScope: true,

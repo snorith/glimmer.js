@@ -1,4 +1,4 @@
-import GlimmerComponent from '@glimmer/component';
+import GlimmerComponent from '@norith/glimmer-component';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, clearRender, click } from '@ember/test-helpers';

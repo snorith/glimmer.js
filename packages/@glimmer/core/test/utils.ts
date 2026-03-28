@@ -6,9 +6,9 @@ import {
   setComponentTemplate,
   templateOnlyComponent,
 } from '..';
-import { renderToString } from '@glimmer/ssr';
+import { renderToString } from '@norith/glimmer-ssr';
 import { TemplateFactory } from '@glimmer/interfaces';
-import { tracked as glimmerTracked } from '@glimmer/tracking';
+import { tracked as glimmerTracked } from '@norith/glimmer-tracking';
 
 import TrackedObject from './utils/tracked-object';
 

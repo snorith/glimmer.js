@@ -1,8 +1,11 @@
 {
-  "name": "@glimmer/babel-preset",
-  "version": "2.0.0-beta.21",
+  "name": "@norith/glimmer-babel-preset",
+  "version": "1.0.0",
   "description": "Glimmer.js Babel Preset",
-  "repository": "https://github.com/glimmerjs/glimmer.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snorith/glimmer.js.git"
+  },
   "author": "Tom Dale <tom@tomdale.net>",
   "license": "MIT",
   "private": false,
@@ -24,8 +27,8 @@
     "esm": "^3.2.25",
     "mocha": "^6.2.0"
   },
-  "volta": {
-    "node": "12.16.1",
-    "yarn": "1.22.4"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

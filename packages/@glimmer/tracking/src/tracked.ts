@@ -14,8 +14,8 @@ import { trackedData } from '@glimmer/validator';
  * @example
  *
  * ```typescript
- * import Component from '@glimmer/component';
- * import { tracked } from '@glimmer/tracking';
+ * import Component from '@norith/glimmer-component';
+ * import { tracked } from '@norith/glimmer-tracking';
  *
  * export default class MyComponent extends Component {
  *    @tracked
@@ -38,8 +38,8 @@ import { trackedData } from '@glimmer/validator';
  *
  *
  * ```typescript
- * import Component from '@glimmer/component';
- * import { tracked } from '@glimmer/tracking';
+ * import Component from '@norith/glimmer-component';
+ * import { tracked } from '@norith/glimmer-tracking';
  *
  * const totalApples = 100;
  *

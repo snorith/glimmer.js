@@ -1,4 +1,4 @@
-import { renderComponent } from '@glimmer/core';
+import { renderComponent } from '@norith/glimmer-core';
 import RehydratableCounter from './src/RehydratableCounter';
 
 rehydrate({

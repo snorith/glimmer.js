@@ -1,11 +1,11 @@
-import { ComponentDefinition, getTemplateIterator } from '@glimmer/core';
+import { ComponentDefinition, getTemplateIterator } from '@norith/glimmer-core';
 import { Dict } from '@glimmer/interfaces';
 import createHTMLDocument from '@simple-dom/document';
 import HTMLSerializer from '@simple-dom/serializer';
 import voidMap from '@simple-dom/void-map';
 import { PassThrough } from 'stream';
 import { parse } from 'url';
-import { BaseEnvDelegate } from '@glimmer/core';
+import { BaseEnvDelegate } from '@norith/glimmer-core';
 import { NodeDOMTreeConstruction, serializeBuilder } from '@glimmer/node';
 import { clientBuilder, DOMChanges, renderSync } from '@glimmer/runtime';
 

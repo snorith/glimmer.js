@@ -1,5 +1,5 @@
 import { DEBUG } from '@glimmer/env';
-import { ComponentManager, ComponentCapabilities } from '@glimmer/core';
+import { ComponentManager, ComponentCapabilities } from '@norith/glimmer-core';
 import { Arguments } from '@glimmer/interfaces';
 import BaseComponent, { ARGS_SET } from './component';
 

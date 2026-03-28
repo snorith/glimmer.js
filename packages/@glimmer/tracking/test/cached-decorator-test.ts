@@ -2,7 +2,7 @@
 const { test } = QUnit;
 
 import { DEBUG } from '@glimmer/env';
-import { tracked, cached } from '@glimmer/tracking';
+import { tracked, cached } from '@norith/glimmer-tracking';
 
 import * as TSFixtures from './fixtures/typescript';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

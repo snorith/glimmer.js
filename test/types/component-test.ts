@@ -1,15 +1,15 @@
 import { expectTypeOf } from 'expect-type';
 
 // Intentionally checking the shape of the exports *and* the export itself.
-import * as gc from '@glimmer/component';
+import * as gc from '@norith/glimmer-component';
 // tslint:disable-next-line: no-duplicate-imports
-import Component from '@glimmer/component';
+import Component from '@norith/glimmer-component';
 
 // Imported from non-public-API so we can check that we are publishing what we
 // expect to be -- and this keeps us honest about the fact that if we *change*
 // this import location, we've broken any existing declarations published using
 // the current type signatures.
-import type { EmptyObject, ExpandSignature } from '@glimmer/component/-private/component';
+import type { EmptyObject, ExpandSignature } from '@norith/glimmer-component/-private/component';
 
 declare let basicComponent: Component;
 expectTypeOf(basicComponent).toHaveProperty('args');

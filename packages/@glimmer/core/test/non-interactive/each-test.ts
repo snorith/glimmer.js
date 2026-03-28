@@ -1,7 +1,7 @@
-import Component from '@glimmer/component';
+import Component from '@norith/glimmer-component';
 
 import { test, render } from '../utils';
-import { setComponentTemplate, precompileTemplate } from '@glimmer/core';
+import { setComponentTemplate, precompileTemplate } from '@norith/glimmer-core';
 
 function freeze<T>(array: T[]): ReadonlyArray<Readonly<T>> {
   return Object.freeze(array.slice().map<T>(Object.freeze));

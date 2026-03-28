@@ -1,8 +1,8 @@
 import { test, render, settled, tracked } from '../utils';
 import { click } from '../utils/dom';
-import { on, action } from '@glimmer/modifier';
-import Component from '@glimmer/component';
-import { setComponentTemplate, precompileTemplate } from '@glimmer/core';
+import { on, action } from '@norith/glimmer-modifier';
+import Component from '@norith/glimmer-component';
+import { setComponentTemplate, precompileTemplate } from '@norith/glimmer-core';
 
 QUnit.module('Modifier Tests', () => {
   test('Supports the on modifier', async (assert) => {

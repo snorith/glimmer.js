@@ -1,5 +1,5 @@
-import Component from '@glimmer/component';
-import { setComponentTemplate, precompileTemplate } from '@glimmer/core';
+import Component from '@norith/glimmer-component';
+import { setComponentTemplate, precompileTemplate } from '@norith/glimmer-core';
 import HTMLSerializer from '@simple-dom/serializer';
 import voidMap from '@simple-dom/void-map';
 import { SerializableNode } from '@simple-dom/interface';

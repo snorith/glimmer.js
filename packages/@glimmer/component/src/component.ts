@@ -1,4 +1,4 @@
-import { setComponentManager, setOwner } from '@glimmer/core';
+import { setComponentManager, setOwner } from '@norith/glimmer-core';
 import GlimmerComponentManager from './component-manager';
 import _GlimmerComponent, { Args } from '../addon/-private/component';
 import { DEBUG } from '@glimmer/env';

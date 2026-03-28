@@ -112,7 +112,7 @@ export type Args<S> = ExpandSignature<S>['Args']['Named'];
  * methods and lifecycle hooks:
  *
  * ```ts
- * import Component from '@glimmer/component';
+ * import Component from '@norith/glimmer-component';
  *
  * export default class extends Component {
  * }
@@ -128,7 +128,7 @@ export type Args<S> = ExpandSignature<S>['Args']['Named'];
  * can attach a legacy jQuery plugin, implement the `didInsertElement()` method:
  *
  * ```ts
- * import Component from '@glimmer/component';
+ * import Component from '@norith/glimmer-component';
  *
  * export default class extends Component {
  *   didInsertElement() {
@@ -171,7 +171,7 @@ export type Args<S> = ExpandSignature<S>['Args']['Named'];
  * template, or pass to another component as an argument.
  *
  * ```ts
- * import Component from '@glimmer/component';
+ * import Component from '@norith/glimmer-component';
  *
  * export default class extends Component {
  *   user = {

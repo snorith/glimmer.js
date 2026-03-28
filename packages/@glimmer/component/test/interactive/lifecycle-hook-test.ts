@@ -1,8 +1,8 @@
-import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
+import Component from '@norith/glimmer-component';
+import { tracked } from '@norith/glimmer-tracking';
 
-import { test, render, settled } from '@glimmer/core/test/utils';
-import { setComponentTemplate, precompileTemplate } from '@glimmer/core';
+import { test, render, settled } from '@norith/glimmer-core/test/utils';
+import { setComponentTemplate, precompileTemplate } from '@norith/glimmer-core';
 
 QUnit.module('[@glimmer/component] Lifecycle Hooks', () => {
   test('Lifecycle hook ordering', async function (assert) {

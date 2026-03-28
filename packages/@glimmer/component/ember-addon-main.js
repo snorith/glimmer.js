@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  name: '@glimmer/component',
+  name: '@norith/glimmer-component',
 };

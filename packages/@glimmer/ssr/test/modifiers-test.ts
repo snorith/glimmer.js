@@ -5,7 +5,7 @@ import {
   setModifierManager,
   modifierCapabilities,
   ModifierManager,
-} from '@glimmer/core';
+} from '@norith/glimmer-core';
 import { renderToString } from '..';
 
 class CustomModifier {

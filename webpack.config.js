@@ -50,7 +50,7 @@ const browserConfig = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@glimmer/babel-preset', '@babel/preset-typescript', '@babel/preset-env'],
+            presets: ['@norith/glimmer-babel-preset', '@babel/preset-typescript', '@babel/preset-env'],
           },
         },
       },
@@ -82,7 +82,7 @@ const nodeServerConfig = {
           loader: 'babel-loader',
           options: {
             presets: [
-              '@glimmer/babel-preset',
+              '@norith/glimmer-babel-preset',
               '@babel/preset-typescript',
               [
                 '@babel/preset-env',

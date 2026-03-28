@@ -15,7 +15,7 @@ import { createCache, getValue } from '@glimmer/validator';
  * getter that sorts the guests alphabetically:
  *
  * ```js
- * import { tracked } from '@glimmer/tracking';
+ * import { tracked } from '@norith/glimmer-tracking';
  *
  * class GuestList {
  *   @tracked guests = ['Zoey', 'Tomster'];
@@ -34,7 +34,7 @@ import { createCache, getValue } from '@glimmer/validator';
  * cache the value instead:
  *
  * ```js
- * import { tracked, cached } from '@glimmer/tracking';
+ * import { tracked, cached } from '@norith/glimmer-tracking';
  *
  * class GuestList {
  *   @tracked guests = ['Zoey', 'Tomster'];
