@@ -1,6 +1,6 @@
 {
   "name": "@norith/glimmer-ssr",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Server-side rendering for Glimmer Applications",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
   "main": "dist/commonjs/index.js",
   "module": "dist/modules/index.js",
   "dependencies": {
-    "@norith/glimmer-core": "1.0.0",
+    "@norith/glimmer-core": "1.0.1",
     "@glimmer/node": "0.84.0",
     "@glimmer/reference": "0.84.0",
     "@glimmer/runtime": "0.84.0",
@@ -23,7 +23,7 @@
     "@simple-dom/void-map": "^1.4.0"
   },
   "devDependencies": {
-    "@norith/glimmer-component": "1.0.0"
+    "@norith/glimmer-component": "1.0.1"
   },
   "publishConfig": {
     "access": "public",

@@ -1,6 +1,6 @@
 {
   "name": "glimmer.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Glimmer.js 2.0 runtime packages (maintained fork)",
   "repository": {
