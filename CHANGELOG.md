@@ -1,3 +1,32 @@
+# @norith/glimmer-* Changelog
+
+Maintained fork of [glimmerjs/glimmer.js](https://github.com/glimmerjs/glimmer.js). See [CLAUDE.md](./CLAUDE.md) for full context.
+
+---
+
+## v1.0.1 (2026-03-28)
+
+#### :rocket: Enhancement
+* `@norith/glimmer-tracking`
+  * Enhanced `@tracked` decorator with `[ClassName#propertyName]` prefix on assertion errors (dev-mode only)
+* `@norith/glimmer-core`
+  * Custom `setTrackingTransactionEnv.debugMessage` with component class name, property name, and actionable TIP about common causes of tracking errors (dev-mode only)
+
+## v1.0.0 (2026-03-28)
+
+#### :house: Fork
+* All packages renamed from `@glimmer/*` to `@norith/glimmer-*`
+* Version reset to 1.0.0 (clean break from upstream 2.0.0-beta.21)
+* Selective renaming: only packages in this repo renamed; glimmer-vm dependencies unchanged
+* Babel preset supports both `@glimmer/core` and `@norith/glimmer-core` import paths
+* Added `.mise.toml` (Node 20), `scripts/bump-version.js`, `scripts/publish-packages.js`
+* Added GitHub Actions publish workflow with Trusted Publishing OIDC
+* Added CLAUDE.md, AGENTS.md, FORK.md documentation
+
+---
+
+*Upstream changelog follows:*
+
 ## v2.0.0-beta.21 (2022-09-06)
 
 #### :rocket: Enhancement
