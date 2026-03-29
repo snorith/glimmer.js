@@ -18,10 +18,63 @@ import {
 import { artifacts } from '@glimmer/program';
 import { programCompilationContext } from '@glimmer/opcode-compiler';
 
+import { DEBUG } from '@glimmer/env';
+import { setTrackingTransactionEnv } from '@glimmer/validator';
+
 import { ClientEnvDelegate, setGlobalContext } from '../environment/delegates';
 import { CompileTimeResolver, RuntimeResolver } from './resolvers';
 
 import { SimpleElement, SimpleDocument } from '@simple-dom/interface';
+
+if (DEBUG) {
+  setTrackingTransactionEnv!({
+    debugMessage(obj: unknown, keyName?: string): string {
+      let objName: string;
+
+      if (typeof obj === 'function') {
+        objName = (obj as Function).name || '(anonymous function)';
+      } else if (typeof obj === 'object' && obj !== null) {
+        const constructor = (obj as any).constructor;
+        const className = constructor?.name || '(unknown class)';
+
+        // Try to get component-specific debug info
+        const debugInfo = [];
+        debugInfo.push(className);
+
+        // Include the constructor's module if available
+        if (constructor && constructor.toString) {
+          const source = constructor.toString();
+          const templateMatch = source.match(/static\s+template/);
+          if (templateMatch) {
+            debugInfo.push('(GlimmerX component)');
+          }
+        }
+
+        objName = debugInfo.join(' ');
+      } else if (obj === undefined) {
+        objName = '(an unknown tag)';
+      } else {
+        objName = String(obj);
+      }
+
+      const dirtyString = keyName
+        ? `\`${keyName}\` on \`${objName}\``
+        : `\`${objName}\``;
+
+      return (
+        `You attempted to update ${dirtyString}, but it had already been used ` +
+        `previously in the same computation.\n\n` +
+        `Attempting to update a value after using it in a computation can cause ` +
+        `logical errors, infinite revalidation bugs, and performance issues, ` +
+        `and is not supported.\n\n` +
+        `TIP: Check the \`${keyName || '(unknown)'}\` property on your component ` +
+        `class \`${objName}\`. This error typically occurs when a tracked property ` +
+        `is read during rendering and then modified in the same render cycle ` +
+        `(e.g., in a getter that has side effects, or a helper that mutates state).`
+      );
+    },
+  });
+}
 
 export interface RenderComponentOptions {
   element: Element;

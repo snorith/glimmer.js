@@ -129,6 +129,37 @@ function descriptorForField<T extends object, K extends keyof T>(
 
   const { getter, setter } = trackedData<T, K>(key, desc && desc.initializer);
 
+  if (DEBUG) {
+    return {
+      enumerable: true,
+      configurable: true,
+
+      get(this: T): any {
+        try {
+          return getter(this);
+        } catch (e: any) {
+          const className = (this as any)?.constructor?.name || '(unknown)';
+          if (e?.message && !e.message.includes(`${className}#${String(key)}`)) {
+            e.message = `[${className}#${String(key)}] ${e.message}`;
+          }
+          throw e;
+        }
+      },
+
+      set(this: T, newValue: any): void {
+        try {
+          setter(this, newValue);
+        } catch (e: any) {
+          const className = (this as any)?.constructor?.name || '(unknown)';
+          if (e?.message && !e.message.includes(`${className}#${String(key)}`)) {
+            e.message = `[${className}#${String(key)}] ${e.message}`;
+          }
+          throw e;
+        }
+      },
+    };
+  }
+
   return {
     enumerable: true,
     configurable: true,
