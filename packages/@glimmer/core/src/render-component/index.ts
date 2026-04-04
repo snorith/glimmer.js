@@ -21,7 +21,7 @@ import { programCompilationContext } from '@glimmer/opcode-compiler';
 import { DEBUG } from '@glimmer/env';
 import { setTrackingTransactionEnv } from '@glimmer/validator';
 
-import { ClientEnvDelegate, setGlobalContext } from '../environment/delegates';
+import { ClientEnvDelegate, BaseEnvDelegate, setGlobalContext } from '../environment/delegates';
 import { CompileTimeResolver, RuntimeResolver } from './resolvers';
 
 import { SimpleElement, SimpleDocument } from '@simple-dom/interface';
@@ -88,9 +88,12 @@ class RenderManager {
   private results: RenderResult[] = [];
   private scheduled = false;
   private renderNotifiers: Array<[ResolveFn, RejectFn]> = [];
+  private envDelegate: BaseEnvDelegate;
 
-  constructor() {
-    setGlobalContext(() => this.scheduleRevalidate());
+  private static allRenderNotifiers: Array<[ResolveFn, RejectFn]> = [];
+
+  constructor(envDelegate: BaseEnvDelegate) {
+    this.envDelegate = envDelegate;
   }
 
   registerResult(result: RenderResult): void {
@@ -108,20 +111,46 @@ class RenderManager {
       try {
         this.revalidate();
         this.renderNotifiers.forEach(([resolve]) => resolve());
+        RenderManager.allRenderNotifiers.forEach(([resolve]) => resolve());
       } catch (err) {
         this.renderNotifiers.forEach(([, reject]) => reject(err as Error));
+        RenderManager.allRenderNotifiers.forEach(([, reject]) => reject(err as Error));
       }
 
       this.renderNotifiers = [];
+      RenderManager.allRenderNotifiers = [];
     }, 0);
   }
 
   private revalidate(): void {
-    for (const result of this.results) {
-      const { env } = result;
-      env.begin();
-      result.rerender();
-      env.commit();
+    const MAX_PASSES = 10;
+    let passes = 0;
+    let hasDirtyResults = true;
+
+    while (hasDirtyResults && passes < MAX_PASSES) {
+      passes++;
+      hasDirtyResults = false;
+      setGlobalContext(
+        () => {
+          hasDirtyResults = true;
+        },
+        (d, dest) => this.envDelegate.scheduledDestructions.push({ destroyable: d, destructor: dest }),
+        (fn) => this.envDelegate.scheduledFinishDestruction.push(fn)
+      );
+
+      for (const result of this.results) {
+        const { env } = result;
+        env.begin();
+        result.rerender();
+        env.commit();
+      }
+    }
+
+    if (DEBUG && passes === MAX_PASSES && hasDirtyResults) {
+      console.warn(
+        'Infinite revalidation detected. Glimmer stopped revalidating after 10 passes. ' +
+          'This usually happens when a tracked property is mutated during the rendering process.'
+      );
     }
   }
 
@@ -135,10 +164,22 @@ class RenderManager {
   }
 }
 
-const MANAGER = new RenderManager();
+const MANAGERS = new WeakMap<BaseEnvDelegate, RenderManager>();
+
+function getManager(envDelegate: BaseEnvDelegate): RenderManager {
+  let manager = MANAGERS.get(envDelegate);
+  if (!manager) {
+    manager = new RenderManager(envDelegate);
+    MANAGERS.set(envDelegate, manager);
+  }
+  return manager;
+}
 
 export function didRender(): Promise<void> {
-  return MANAGER.didRender();
+  // Return a promise that resolves when all currently scheduled revalidations are finished.
+  return new Promise((resolve, reject) => {
+    (RenderManager as any).allRenderNotifiers.push([resolve, reject]);
+  });
 }
 
 export type ComponentDefinition = object;
@@ -160,24 +201,26 @@ async function renderComponent(
 
   const { element, args, owner } = options;
   const document = self.document as unknown as SimpleDocument;
+  const envDelegate = new ClientEnvDelegate();
 
+  const manager = getManager(envDelegate as BaseEnvDelegate);
   const { env, iterator } = getTemplateIterator(
     ComponentClass,
     element,
     { document },
-    new ClientEnvDelegate(),
+    envDelegate,
     args,
     owner,
     options.rehydrate ? rehydrationBuilder : clientBuilder
   );
   const result = renderSync(env, iterator);
-  MANAGER.registerResult(result);
+  manager.registerResult(result);
 }
 
 export default renderComponent;
 
-export function scheduleRevalidate(): void {
-  MANAGER.scheduleRevalidate();
+export function scheduleRevalidate(envDelegate: BaseEnvDelegate): void {
+  getManager(envDelegate).scheduleRevalidate();
 }
 
 const resolver = new RuntimeResolver();

@@ -139,8 +139,11 @@ function descriptorForField<T extends object, K extends keyof T>(
           return getter(this);
         } catch (e: any) {
           const className = (this as any)?.constructor?.name || '(unknown)';
-          if (e?.message && !e.message.includes(`${className}#${String(key)}`)) {
-            e.message = `[${className}#${String(key)}] ${e.message}`;
+          if (e instanceof Error && !e.message.includes(`${className}#${String(key)}`)) {
+            const wrappedError = new Error(`[${className}#${String(key)}] ${e.message}`);
+            (wrappedError as any).originalError = e;
+            wrappedError.stack = e.stack;
+            throw wrappedError;
           }
           throw e;
         }
@@ -151,8 +154,11 @@ function descriptorForField<T extends object, K extends keyof T>(
           setter(this, newValue);
         } catch (e: any) {
           const className = (this as any)?.constructor?.name || '(unknown)';
-          if (e?.message && !e.message.includes(`${className}#${String(key)}`)) {
-            e.message = `[${className}#${String(key)}] ${e.message}`;
+          if (e instanceof Error && !e.message.includes(`${className}#${String(key)}`)) {
+            const wrappedError = new Error(`[${className}#${String(key)}] ${e.message}`);
+            (wrappedError as any).originalError = e;
+            wrappedError.stack = e.stack;
+            throw wrappedError;
           }
           throw e;
         }

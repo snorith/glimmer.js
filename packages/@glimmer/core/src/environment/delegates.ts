@@ -7,13 +7,12 @@ import { isNativeIterable, NativeIterator } from './iterator';
 import { DEBUG } from '@glimmer/env';
 import toBool from './to-bool';
 
-let scheduledDestructions: {
-  destroyable: Destroyable;
-  destructor: Destructor<object>;
-}[] = [];
-let scheduledFinishDestruction: (() => void)[] = [];
 
-export function setGlobalContext(scheduleRevalidate: () => void): void {
+export function setGlobalContext(
+  scheduleRevalidate: () => void,
+  scheduleDestroy: (destroyable: Destroyable, destructor: Destructor<object>) => void,
+  scheduleDestroyed: (fn: () => void) => void
+): void {
   setGlobalContextVM({
     getProp(obj: Record<string, unknown>, key: string) {
       return obj[key];
@@ -55,13 +54,9 @@ export function setGlobalContext(scheduleRevalidate: () => void): void {
       return null;
     },
 
-    scheduleDestroy(destroyable, destructor) {
-      scheduledDestructions.push({ destroyable, destructor });
-    },
+    scheduleDestroy,
 
-    scheduleDestroyed(fn) {
-      scheduledFinishDestruction.push(fn);
-    },
+    scheduleDestroyed,
 
     warnIfStyleNotTrusted() {
       // Do nothing
@@ -95,15 +90,21 @@ export abstract class BaseEnvDelegate implements EnvironmentDelegate {
   enableDebugTooling = false;
   owner = {};
 
+  scheduledDestructions: {
+    destroyable: Destroyable;
+    destructor: Destructor<object>;
+  }[] = [];
+  scheduledFinishDestruction: (() => void)[] = [];
+
   onTransactionCommit(): void {
-    for (const { destroyable, destructor } of scheduledDestructions) {
+    for (const { destroyable, destructor } of this.scheduledDestructions) {
       destructor(destroyable);
     }
 
-    scheduledFinishDestruction.forEach((fn) => fn());
+    this.scheduledFinishDestruction.forEach((fn) => fn());
 
-    scheduledDestructions = [];
-    scheduledFinishDestruction = [];
+    this.scheduledDestructions = [];
+    this.scheduledFinishDestruction = [];
   }
 }
 
