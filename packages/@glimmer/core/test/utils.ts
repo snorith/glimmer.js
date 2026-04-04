@@ -21,7 +21,7 @@ export async function render(
   options?: HTMLElement | Partial<RenderComponentOptions>
 ): Promise<string> {
   if ('__meta' in component) {
-    const template = component;
+    const template = component as TemplateFactory;
 
     component = setComponentTemplate(template, templateOnlyComponent());
   }

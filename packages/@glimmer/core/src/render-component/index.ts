@@ -83,14 +83,15 @@ export interface RenderComponentOptions {
 
 type ResolveFn = () => void;
 type RejectFn = (error: Error) => void;
+let ACTIVE_ENV_DELEGATE: BaseEnvDelegate | null = null;
 
 class RenderManager {
   private results: RenderResult[] = [];
   private scheduled = false;
+  private isRevalidating = false;
+  private needsAnotherPass = false;
   private renderNotifiers: Array<[ResolveFn, RejectFn]> = [];
   private envDelegate: BaseEnvDelegate;
-
-  private static allRenderNotifiers: Array<[ResolveFn, RejectFn]> = [];
 
   constructor(envDelegate: BaseEnvDelegate) {
     this.envDelegate = envDelegate;
@@ -111,39 +112,35 @@ class RenderManager {
       try {
         this.revalidate();
         this.renderNotifiers.forEach(([resolve]) => resolve());
-        RenderManager.allRenderNotifiers.forEach(([resolve]) => resolve());
       } catch (err) {
         this.renderNotifiers.forEach(([, reject]) => reject(err as Error));
-        RenderManager.allRenderNotifiers.forEach(([, reject]) => reject(err as Error));
       }
 
       this.renderNotifiers = [];
-      RenderManager.allRenderNotifiers = [];
     }, 0);
   }
 
   private revalidate(): void {
     const MAX_PASSES = 10;
     let passes = 0;
-    let hasDirtyResults = true;
+    let hasDirtyResults = this.results.length > 0;
 
     while (hasDirtyResults && passes < MAX_PASSES) {
       passes++;
-      hasDirtyResults = false;
-      setGlobalContext(
-        () => {
-          hasDirtyResults = true;
-        },
-        (d, dest) => this.envDelegate.scheduledDestructions.push({ destroyable: d, destructor: dest }),
-        (fn) => this.envDelegate.scheduledFinishDestruction.push(fn)
-      );
+      this.needsAnotherPass = false;
+      this.isRevalidating = true;
 
-      for (const result of this.results) {
-        const { env } = result;
-        env.begin();
-        result.rerender();
-        env.commit();
-      }
+      runWithEnvDelegate(this.envDelegate, () => {
+        for (const result of this.results) {
+          const { env } = result;
+          env.begin();
+          result.rerender();
+          env.commit();
+        }
+      });
+
+      this.isRevalidating = false;
+      hasDirtyResults = this.needsAnotherPass;
     }
 
     if (DEBUG && passes === MAX_PASSES && hasDirtyResults) {
@@ -162,24 +159,62 @@ class RenderManager {
     }
     return Promise.resolve();
   }
+
+  requestRevalidate(): void {
+    if (this.isRevalidating) {
+      this.needsAnotherPass = true;
+      return;
+    }
+
+    this.scheduleRevalidate();
+  }
 }
 
-const MANAGERS = new WeakMap<BaseEnvDelegate, RenderManager>();
+let MANAGER: RenderManager | null = null;
+let ENV_DELEGATE: ClientEnvDelegate | null = null;
 
-function getManager(envDelegate: BaseEnvDelegate): RenderManager {
-  let manager = MANAGERS.get(envDelegate);
-  if (!manager) {
-    manager = new RenderManager(envDelegate);
-    MANAGERS.set(envDelegate, manager);
+setGlobalContext(
+  () => MANAGER?.requestRevalidate(),
+  (d, dest) => {
+    if (ACTIVE_ENV_DELEGATE) {
+      ACTIVE_ENV_DELEGATE.scheduledDestructions.push(() => dest(d));
+      return;
+    }
+
+    dest(d);
+  },
+  (fn) => {
+    if (ACTIVE_ENV_DELEGATE) {
+      ACTIVE_ENV_DELEGATE.scheduledFinishDestruction.push(fn);
+      return;
+    }
+
+    fn();
   }
-  return manager;
+);
+
+export function runWithEnvDelegate<T>(envDelegate: BaseEnvDelegate, callback: () => T): T {
+  const previousEnvDelegate = ACTIVE_ENV_DELEGATE;
+  ACTIVE_ENV_DELEGATE = envDelegate;
+
+  try {
+    return callback();
+  } finally {
+    ACTIVE_ENV_DELEGATE = previousEnvDelegate;
+  }
+}
+
+function getManager(): RenderManager {
+  if (!MANAGER) {
+    ENV_DELEGATE = new ClientEnvDelegate();
+    MANAGER = new RenderManager(ENV_DELEGATE);
+  }
+
+  return MANAGER;
 }
 
 export function didRender(): Promise<void> {
-  // Return a promise that resolves when all currently scheduled revalidations are finished.
-  return new Promise((resolve, reject) => {
-    (RenderManager as any).allRenderNotifiers.push([resolve, reject]);
-  });
+  return MANAGER ? MANAGER.didRender() : Promise.resolve();
 }
 
 export type ComponentDefinition = object;
@@ -201,26 +236,25 @@ async function renderComponent(
 
   const { element, args, owner } = options;
   const document = self.document as unknown as SimpleDocument;
-  const envDelegate = new ClientEnvDelegate();
+  const manager = getManager();
 
-  const manager = getManager(envDelegate as BaseEnvDelegate);
   const { env, iterator } = getTemplateIterator(
     ComponentClass,
     element,
     { document },
-    envDelegate,
+    ENV_DELEGATE!,
     args,
     owner,
     options.rehydrate ? rehydrationBuilder : clientBuilder
   );
-  const result = renderSync(env, iterator);
+  const result = runWithEnvDelegate(ENV_DELEGATE!, () => renderSync(env, iterator));
   manager.registerResult(result);
 }
 
 export default renderComponent;
 
-export function scheduleRevalidate(envDelegate: BaseEnvDelegate): void {
-  getManager(envDelegate).scheduleRevalidate();
+export function scheduleRevalidate(): void {
+  MANAGER?.scheduleRevalidate();
 }
 
 const resolver = new RuntimeResolver();

@@ -4,6 +4,7 @@ export {
   didRender,
   getTemplateIterator,
   ComponentDefinition,
+  runWithEnvDelegate,
 } from './src/render-component';
 
 export { BaseEnvDelegate } from './src/environment/delegates';

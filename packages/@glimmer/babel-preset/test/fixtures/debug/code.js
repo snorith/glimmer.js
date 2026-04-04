@@ -10,13 +10,14 @@ if (DEBUG) {
 assert(true, 'is true');
 deprecate('this is deprecated', false, { id: 'foo' });
 
-
 class Test {
   @tracked bar = 123;
 
-  #dog = "dog";
+  #dog = 'dog';
 
-  #cat() { return "cat" }
+  #cat() {
+    return 'cat';
+  }
 }
 
 precompileTemplate('Hello, world!', { strictMode: true, scope: { Test } });

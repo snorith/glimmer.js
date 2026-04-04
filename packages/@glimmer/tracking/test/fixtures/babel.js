@@ -1,4 +1,4 @@
-import {cached, tracked} from '@norith/glimmer-tracking';
+import { cached, tracked } from '@norith/glimmer-tracking';
 
 export class Tom {
   @tracked firstName = 'Tom';
@@ -16,7 +16,7 @@ class FrozenToran {
 
 Object.freeze(FrozenToran);
 
-export {FrozenToran};
+export { FrozenToran };
 
 export class PersonWithCount {
   @tracked _firstName = 'Tom';
@@ -137,7 +137,6 @@ export function createClassWithCachedSetter() {
 
   return new PersonWithCachedSetter();
 }
-
 
 export function createClassWithTrackedDependentKeys() {
   class DependentKeysAreCool {

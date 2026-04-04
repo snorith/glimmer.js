@@ -1,4 +1,4 @@
-import { ComponentDefinition, getTemplateIterator } from '@norith/glimmer-core';
+import { ComponentDefinition, getTemplateIterator, runWithEnvDelegate } from '@norith/glimmer-core';
 import { Dict } from '@glimmer/interfaces';
 import createHTMLDocument from '@simple-dom/document';
 import HTMLSerializer from '@simple-dom/serializer';
@@ -61,16 +61,17 @@ export function renderToStream(
   // TODO: Remove in Glimmer VM 0.48, it's not necessary
   const updateOperations = new DOMChanges(document);
 
+  const envDelegate = new ServerEnvDelegate();
   const { env, iterator } = getTemplateIterator(
     ComponentClass,
     element,
     { appendOperations, updateOperations },
-    new ServerEnvDelegate(),
+    envDelegate,
     options.args,
     options.owner,
     options.rehydrate ? serializeBuilder : clientBuilder
   );
-  renderSync(env, iterator);
+  runWithEnvDelegate(envDelegate, () => renderSync(env, iterator));
 
   const serializer = options.serializer || defaultSerializer;
 

@@ -1,16 +1,15 @@
 import setGlobalContextVM from '@glimmer/global-context';
 import { EnvironmentDelegate } from '@glimmer/runtime';
-import { Option, Destructor, Destroyable } from '@glimmer/interfaces';
+import { Option, Destructor } from '@glimmer/interfaces';
 import { IteratorDelegate } from '@glimmer/reference';
 
 import { isNativeIterable, NativeIterator } from './iterator';
 import { DEBUG } from '@glimmer/env';
 import toBool from './to-bool';
 
-
 export function setGlobalContext(
   scheduleRevalidate: () => void,
-  scheduleDestroy: (destroyable: Destroyable, destructor: Destructor<object>) => void,
+  scheduleDestroy: <T extends object>(destroyable: T, destructor: Destructor<T>) => void,
   scheduleDestroyed: (fn: () => void) => void
 ): void {
   setGlobalContextVM({
@@ -90,15 +89,12 @@ export abstract class BaseEnvDelegate implements EnvironmentDelegate {
   enableDebugTooling = false;
   owner = {};
 
-  scheduledDestructions: {
-    destroyable: Destroyable;
-    destructor: Destructor<object>;
-  }[] = [];
+  scheduledDestructions: (() => void)[] = [];
   scheduledFinishDestruction: (() => void)[] = [];
 
   onTransactionCommit(): void {
-    for (const { destroyable, destructor } of this.scheduledDestructions) {
-      destructor(destroyable);
+    for (const destroy of this.scheduledDestructions) {
+      destroy();
     }
 
     this.scheduledFinishDestruction.forEach((fn) => fn());

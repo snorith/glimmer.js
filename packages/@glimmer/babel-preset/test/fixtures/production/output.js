@@ -37,7 +37,7 @@ let Test = (_class = (_dog = /*#__PURE__*/new WeakMap(), _cat = /*#__PURE__*/new
 
     _classPrivateFieldInitSpec(this, _dog, {
       writable: true,
-      value: "dog"
+      value: 'dog'
     });
   }
 
@@ -51,7 +51,7 @@ let Test = (_class = (_dog = /*#__PURE__*/new WeakMap(), _cat = /*#__PURE__*/new
 })), _class);
 
 function _cat2() {
-  return "cat";
+  return 'cat';
 }
 
 _createTemplateFactory(

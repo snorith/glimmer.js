@@ -134,13 +134,17 @@ function descriptorForField<T extends object, K extends keyof T>(
       enumerable: true,
       configurable: true,
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       get(this: T): any {
         try {
           return getter(this);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (e: any) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const className = (this as any)?.constructor?.name || '(unknown)';
           if (e instanceof Error && !e.message.includes(`${className}#${String(key)}`)) {
             const wrappedError = new Error(`[${className}#${String(key)}] ${e.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (wrappedError as any).originalError = e;
             wrappedError.stack = e.stack;
             throw wrappedError;
@@ -149,13 +153,17 @@ function descriptorForField<T extends object, K extends keyof T>(
         }
       },
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       set(this: T, newValue: any): void {
         try {
           setter(this, newValue);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (e: any) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const className = (this as any)?.constructor?.name || '(unknown)';
           if (e instanceof Error && !e.message.includes(`${className}#${String(key)}`)) {
             const wrappedError = new Error(`[${className}#${String(key)}] ${e.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (wrappedError as any).originalError = e;
             wrappedError.stack = e.stack;
             throw wrappedError;
