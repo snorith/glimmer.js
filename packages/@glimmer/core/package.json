@@ -1,6 +1,6 @@
 {
   "name": "@norith/glimmer-core",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Core rendering functionality",
   "main": "dist/commonjs/index.js",
   "module": "dist/modules/index.js",
@@ -28,8 +28,8 @@
   },
   "devDependencies": {
     "@glimmer/compiler": "0.84.0",
-    "@norith/glimmer-component": "1.0.1",
-    "@norith/glimmer-tracking": "1.0.1"
+    "@norith/glimmer-component": "1.0.2",
+    "@norith/glimmer-tracking": "1.0.2"
   },
   "publishConfig": {
     "access": "public",
