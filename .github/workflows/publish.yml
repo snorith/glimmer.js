@@ -38,6 +38,8 @@ jobs:
         run: |
           npm install -g npm@latest
           npm --version
+          # Remove always-auth injected by setup-node; deprecated in npm 11+
+          npm config delete always-auth
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile --non-interactive

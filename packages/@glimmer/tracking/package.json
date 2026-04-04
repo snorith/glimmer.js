@@ -7,7 +7,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/snorith/glimmer.js.git"
+    "url": "git+https://github.com/snorith/glimmer.js.git"
   },
   "license": "MIT",
   "contributors": [
