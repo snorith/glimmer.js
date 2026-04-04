@@ -7,8 +7,10 @@ import { isNativeIterable, NativeIterator } from './iterator';
 import { DEBUG } from '@glimmer/env';
 import toBool from './to-bool';
 
-let scheduledDestroyables: Destroyable[] = [];
-let scheduledDestructors: Destructor<object>[] = [];
+let scheduledDestructions: {
+  destroyable: Destroyable;
+  destructor: Destructor<object>;
+}[] = [];
 let scheduledFinishDestruction: (() => void)[] = [];
 
 export function setGlobalContext(scheduleRevalidate: () => void): void {
@@ -54,8 +56,7 @@ export function setGlobalContext(scheduleRevalidate: () => void): void {
     },
 
     scheduleDestroy(destroyable, destructor) {
-      scheduledDestroyables.push(destroyable);
-      scheduledDestructors.push(destructor);
+      scheduledDestructions.push({ destroyable, destructor });
     },
 
     scheduleDestroyed(fn) {
@@ -95,14 +96,13 @@ export abstract class BaseEnvDelegate implements EnvironmentDelegate {
   owner = {};
 
   onTransactionCommit(): void {
-    for (let i = 0; i < scheduledDestroyables.length; i++) {
-      scheduledDestructors[i](scheduledDestroyables[i]);
+    for (const { destroyable, destructor } of scheduledDestructions) {
+      destructor(destroyable);
     }
 
     scheduledFinishDestruction.forEach((fn) => fn());
 
-    scheduledDestroyables = [];
-    scheduledDestructors = [];
+    scheduledDestructions = [];
     scheduledFinishDestruction = [];
   }
 }

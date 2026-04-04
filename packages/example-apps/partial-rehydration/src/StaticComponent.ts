@@ -1,4 +1,8 @@
-import { precompileTemplate, setComponentTemplate, templateOnlyComponent } from '@norith/glimmer-core';
+import {
+  precompileTemplate,
+  setComponentTemplate,
+  templateOnlyComponent,
+} from '@norith/glimmer-core';
 import RehydratableCounter from './RehydratableCounter';
 
 const StaticComponent = setComponentTemplate(

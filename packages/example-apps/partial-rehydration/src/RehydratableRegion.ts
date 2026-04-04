@@ -1,4 +1,8 @@
-import { precompileTemplate, setComponentTemplate, templateOnlyComponent } from '@norith/glimmer-core';
+import {
+  precompileTemplate,
+  setComponentTemplate,
+  templateOnlyComponent,
+} from '@norith/glimmer-core';
 
 function toJSON(args): string {
   return JSON.stringify(args);

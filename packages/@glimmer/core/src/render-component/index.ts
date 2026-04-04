@@ -32,9 +32,9 @@ if (DEBUG) {
       let objName: string;
 
       if (typeof obj === 'function') {
-        objName = (obj as Function).name || '(anonymous function)';
+        objName = (obj as { name?: string }).name || '(anonymous function)';
       } else if (typeof obj === 'object' && obj !== null) {
-        const constructor = (obj as any).constructor;
+        const constructor = (obj as { constructor?: { name?: string } }).constructor;
         const className = constructor?.name || '(unknown class)';
 
         // Try to get component-specific debug info
@@ -57,9 +57,7 @@ if (DEBUG) {
         objName = String(obj);
       }
 
-      const dirtyString = keyName
-        ? `\`${keyName}\` on \`${objName}\``
-        : `\`${objName}\``;
+      const dirtyString = keyName ? `\`${keyName}\` on \`${objName}\`` : `\`${objName}\``;
 
       return (
         `You attempted to update ${dirtyString}, but it had already been used ` +
@@ -86,15 +84,61 @@ export interface RenderComponentOptions {
 type ResolveFn = () => void;
 type RejectFn = (error: Error) => void;
 
-let renderNotifiers: Array<[ResolveFn, RejectFn]> = [];
+class RenderManager {
+  private results: RenderResult[] = [];
+  private scheduled = false;
+  private renderNotifiers: Array<[ResolveFn, RejectFn]> = [];
+
+  constructor() {
+    setGlobalContext(() => this.scheduleRevalidate());
+  }
+
+  registerResult(result: RenderResult): void {
+    this.results.push(result);
+  }
+
+  scheduleRevalidate(): void {
+    if (this.scheduled) {
+      return;
+    }
+
+    this.scheduled = true;
+    setTimeout(() => {
+      this.scheduled = false;
+      try {
+        this.revalidate();
+        this.renderNotifiers.forEach(([resolve]) => resolve());
+      } catch (err) {
+        this.renderNotifiers.forEach(([, reject]) => reject(err as Error));
+      }
+
+      this.renderNotifiers = [];
+    }, 0);
+  }
+
+  private revalidate(): void {
+    for (const result of this.results) {
+      const { env } = result;
+      env.begin();
+      result.rerender();
+      env.commit();
+    }
+  }
+
+  didRender(): Promise<void> {
+    if (this.scheduled) {
+      return new Promise((resolve, reject) => {
+        this.renderNotifiers.push([resolve, reject]);
+      });
+    }
+    return Promise.resolve();
+  }
+}
+
+const MANAGER = new RenderManager();
 
 export function didRender(): Promise<void> {
-  if (scheduled) {
-    return new Promise((resolve, reject) => {
-      renderNotifiers.push([resolve, reject]);
-    });
-  }
-  return Promise.resolve();
+  return MANAGER.didRender();
 }
 
 export type ComponentDefinition = object;
@@ -127,42 +171,13 @@ async function renderComponent(
     options.rehydrate ? rehydrationBuilder : clientBuilder
   );
   const result = renderSync(env, iterator);
-  results.push(result);
+  MANAGER.registerResult(result);
 }
 
 export default renderComponent;
 
-const results: RenderResult[] = [];
-
-let scheduled = false;
 export function scheduleRevalidate(): void {
-  if (scheduled) {
-    return;
-  }
-
-  scheduled = true;
-  setTimeout(() => {
-    scheduled = false;
-    try {
-      revalidate();
-      renderNotifiers.forEach(([resolve]) => resolve());
-    } catch (err) {
-      renderNotifiers.forEach(([, reject]) => reject(err));
-    }
-
-    renderNotifiers = [];
-  }, 0);
-}
-
-setGlobalContext(scheduleRevalidate);
-
-function revalidate(): void {
-  for (const result of results) {
-    const { env } = result;
-    env.begin();
-    result.rerender();
-    env.commit();
-  }
+  MANAGER.scheduleRevalidate();
 }
 
 const resolver = new RuntimeResolver();
