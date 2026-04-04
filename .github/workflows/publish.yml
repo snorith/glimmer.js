@@ -63,7 +63,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "Release v${{ steps.version.outputs.version }}"
-          git tag "v${{ steps.version.outputs.version }}"
+          # Force tag to handle existing tags from previous failed runs
+          git tag -f "v${{ steps.version.outputs.version }}"
           git push
-          git push --tags
+          git push --force --tags
 
