@@ -30,7 +30,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: '22'
+          # Pin to 22.14.0 to avoid npm regression in 22.22.2 (MODULE_NOT_FOUND promise-retry)
+          node-version: '22.14.0'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Upgrade npm for Trusted Publishing OIDC
