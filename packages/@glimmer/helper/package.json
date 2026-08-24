@@ -1,6 +1,6 @@
 {
   "name": "@norith/glimmer-helper",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Helper Functionality",
   "main": "dist/commonjs/index.js",
   "module": "dist/modules/index.js",
@@ -15,8 +15,8 @@
     "build": "webpack"
   },
   "dependencies": {
-    "@norith/glimmer-component": "1.0.1",
-    "@norith/glimmer-core": "1.0.1",
+    "@norith/glimmer-component": "1.0.3",
+    "@norith/glimmer-core": "1.0.3",
     "@glimmer/runtime": "0.84.0"
   },
   "publishConfig": {
