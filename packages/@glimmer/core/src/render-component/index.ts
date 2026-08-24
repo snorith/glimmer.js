@@ -5,6 +5,9 @@ import {
   EnvironmentDelegate,
   renderSync,
   rehydrationBuilder,
+  destroy,
+  isDestroying,
+  isDestroyed,
 } from '@glimmer/runtime';
 import {
   Cursor as GlimmerCursor,
@@ -102,15 +105,15 @@ export type ComponentDefinition = object;
 async function renderComponent(
   ComponentClass: ComponentDefinition,
   options: RenderComponentOptions
-): Promise<void>;
+): Promise<RenderResult>;
 async function renderComponent(
   ComponentClass: ComponentDefinition,
   element: HTMLElement
-): Promise<void>;
+): Promise<RenderResult>;
 async function renderComponent(
   ComponentClass: ComponentDefinition,
   optionsOrElement: RenderComponentOptions | HTMLElement
-): Promise<void> {
+): Promise<RenderResult> {
   const options: RenderComponentOptions =
     optionsOrElement instanceof HTMLElement ? { element: optionsOrElement } : optionsOrElement;
 
@@ -128,9 +131,39 @@ async function renderComponent(
   );
   const result = renderSync(env, iterator);
   results.push(result);
+  return result;
 }
 
 export default renderComponent;
+
+/**
+ * Destroy a render result previously returned by `renderComponent`: runs the
+ * component tree's destructors (`willDestroy` etc.), clears the rendered DOM,
+ * and removes the result from the revalidation list so it no longer re-renders.
+ *
+ * Destruction is performed inside an environment transaction because the env
+ * delegate only flushes scheduled destructors in `onTransactionCommit` — a bare
+ * `destroy()` would schedule teardown that never runs.
+ *
+ * Idempotent: destroying an already-destroyed (or currently-destroying) result
+ * is a no-op, so callers may combine per-test manual destruction with a blanket
+ * destroy-all in an `afterEach`.
+ */
+export function destroyRenderResult(result: RenderResult): void {
+  const index = results.indexOf(result);
+  if (index !== -1) {
+    results.splice(index, 1);
+  }
+
+  if (isDestroying(result) || isDestroyed(result)) {
+    return;
+  }
+
+  const { env } = result;
+  env.begin();
+  destroy(result);
+  env.commit();
+}
 
 const results: RenderResult[] = [];
 

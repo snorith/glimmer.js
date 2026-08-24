@@ -4,7 +4,10 @@ export {
   didRender,
   getTemplateIterator,
   ComponentDefinition,
+  destroyRenderResult,
 } from './src/render-component';
+
+export type { RenderResult } from '@glimmer/interfaces';
 
 export { BaseEnvDelegate } from './src/environment/delegates';
 
