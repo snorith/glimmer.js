@@ -7,7 +7,12 @@ on:
         description: 'Release type'
         required: true
         type: choice
+        default: none
         options:
+          # 'none' publishes the versions ALREADY SET on the selected ref (release branches
+          # pre-set them by hand when a bump would compute a colliding number — the FP-1690
+          # teardown release is the precedent). The bump options remain for normal releases.
+          - none
           - patch
           - minor
           - major
@@ -36,7 +41,10 @@ jobs:
 
       - name: Upgrade npm for Trusted Publishing OIDC
         run: |
-          npm install -g npm@latest
+          # npm 11: the newest line supporting the pinned node (npm 12 needs node >=22.22.2,
+          # and 'latest' drifted there — it broke this workflow on 2026-08-24). OIDC trusted
+          # publishing needs npm >= 11.5.1, which 11.x satisfies.
+          npm install -g npm@11
           npm --version
           # Remove always-auth injected by setup-node; deprecated in npm 11+
           npm config delete always-auth
@@ -50,7 +58,9 @@ jobs:
       - name: Bump version
         id: version
         run: |
-          node scripts/bump-version.js ${{ inputs.release_type }}
+          if [ "${{ inputs.release_type }}" != "none" ]; then
+            node scripts/bump-version.js ${{ inputs.release_type }}
+          fi
           NEW_VERSION=$(node -p "require('./package.json').version")
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -64,9 +74,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Release v${{ steps.version.outputs.version }}"
-          # Force-push only this specific tag to handle reruns after failures
+          # With release_type=none the tree is already at the release version — nothing to commit.
+          git diff --cached --quiet || git commit -m "Release v${{ steps.version.outputs.version }}"
+          # Force-push only this specific tag to handle reruns after failures (and, for 'none'
+          # releases, a stale upstream tag on the same number — the v1.0.2 release set the precedent)
           git tag -f "v${{ steps.version.outputs.version }}"
-          git push
+          git push origin HEAD
           git push origin "+refs/tags/v${{ steps.version.outputs.version }}"
 

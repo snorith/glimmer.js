@@ -93,14 +93,23 @@ export abstract class BaseEnvDelegate implements EnvironmentDelegate {
   scheduledFinishDestruction: (() => void)[] = [];
 
   onTransactionCommit(): void {
-    for (const destroy of this.scheduledDestructions) {
-      destroy();
+    // Drain to QUIESCENCE, snapshotting each batch (ported from the 1.0.3 release line). Two
+    // hazards, both measured there: a destructor can destroy another root, whose commit
+    // re-enters this hook — iterating the live arrays re-ran the outer destructors; and a
+    // destructor can schedule further destruction into the just-cleared arrays, which a single
+    // snapshot would strand forever.
+    while (this.scheduledDestructions.length > 0 || this.scheduledFinishDestruction.length > 0) {
+      const destructions = this.scheduledDestructions;
+      const finishers = this.scheduledFinishDestruction;
+      this.scheduledDestructions = [];
+      this.scheduledFinishDestruction = [];
+
+      for (const destroy of destructions) {
+        destroy();
+      }
+
+      finishers.forEach((fn) => fn());
     }
-
-    this.scheduledFinishDestruction.forEach((fn) => fn());
-
-    this.scheduledDestructions = [];
-    this.scheduledFinishDestruction = [];
   }
 }
 

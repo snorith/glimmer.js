@@ -5,6 +5,10 @@ import {
   EnvironmentDelegate,
   renderSync,
   rehydrationBuilder,
+  destroy,
+  isDestroying,
+  isDestroyed,
+  inTransaction,
 } from '@glimmer/runtime';
 import {
   Cursor as GlimmerCursor,
@@ -99,6 +103,13 @@ class RenderManager {
 
   registerResult(result: RenderResult): void {
     this.results.push(result);
+  }
+
+  unregisterResult(result: RenderResult): void {
+    const index = this.results.indexOf(result);
+    if (index !== -1) {
+      this.results.splice(index, 1);
+    }
   }
 
   scheduleRevalidate(): void {
@@ -222,15 +233,15 @@ export type ComponentDefinition = object;
 async function renderComponent(
   ComponentClass: ComponentDefinition,
   options: RenderComponentOptions
-): Promise<void>;
+): Promise<RenderResult>;
 async function renderComponent(
   ComponentClass: ComponentDefinition,
   element: HTMLElement
-): Promise<void>;
+): Promise<RenderResult>;
 async function renderComponent(
   ComponentClass: ComponentDefinition,
   optionsOrElement: RenderComponentOptions | HTMLElement
-): Promise<void> {
+): Promise<RenderResult> {
   const options: RenderComponentOptions =
     optionsOrElement instanceof HTMLElement ? { element: optionsOrElement } : optionsOrElement;
 
@@ -249,9 +260,40 @@ async function renderComponent(
   );
   const result = runWithEnvDelegate(ENV_DELEGATE!, () => renderSync(env, iterator));
   manager.registerResult(result);
+  return result;
 }
 
 export default renderComponent;
+
+/**
+ * Destroy a render result previously returned by `renderComponent`: runs the component tree's
+ * destructors (`willDestroy` etc.), clears the rendered DOM, and removes the result from the
+ * revalidation list so it no longer re-renders.
+ *
+ * Runs under the active env delegate inside a transaction (`inTransaction` reuses one that is
+ * already open — a destructor or a render-time callback may itself destroy another root), so
+ * scheduled destructions drain through `onTransactionCommit` before this returns. Idempotent:
+ * destroying an already-destroyed (or currently-destroying) result is a no-op, so per-test
+ * destruction composes with a blanket destroy-all in an `afterEach`.
+ *
+ * Ported from the 1.0.3 release line (fp-1690-teardown-1.0.3), where the webapp's test harness
+ * consumes it; see that branch for the regression tests covering nested and mid-drain destroys.
+ */
+export function destroyRenderResult(result: RenderResult): void {
+  MANAGER?.unregisterResult(result);
+
+  if (isDestroying(result) || isDestroyed(result)) {
+    return;
+  }
+
+  const { env } = result;
+  const run = (): void => inTransaction(env, () => destroy(result));
+  if (ENV_DELEGATE) {
+    runWithEnvDelegate(ENV_DELEGATE, run);
+  } else {
+    run();
+  }
+}
 
 export function scheduleRevalidate(): void {
   MANAGER?.scheduleRevalidate();
