@@ -10,14 +10,13 @@
   },
   "author": "Tom Dale <tom@tomdale.net>",
   "license": "MIT",
-  "private": false,
   "scripts": {
     "build": "webpack"
   },
   "dependencies": {
+    "@glimmer/runtime": "0.84.0",
     "@norith/glimmer-component": "1.0.3",
-    "@norith/glimmer-core": "1.0.3",
-    "@glimmer/runtime": "0.84.0"
+    "@norith/glimmer-core": "1.0.3"
   },
   "publishConfig": {
     "access": "public",

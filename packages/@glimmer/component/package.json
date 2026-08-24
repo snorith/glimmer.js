@@ -29,9 +29,9 @@
     "test:all": "ember try:each"
   },
   "dependencies": {
-    "@norith/glimmer-core": "1.0.3",
     "@glimmer/env": "^0.1.7",
     "@glimmer/util": "0.84.0",
+    "@norith/glimmer-core": "1.0.3",
     "broccoli-file-creator": "^2.1.1",
     "broccoli-merge-trees": "^3.0.2",
     "ember-cli-babel": "^7.23.0",
@@ -51,8 +51,8 @@
     "@glimmer/compiler": "0.84.0",
     "@glimmer/interfaces": "0.84.0",
     "@glimmer/resolver": "^0.4.3",
-    "@norith/glimmer-tracking": "1.0.3",
     "@glimmer/wire-format": "0.84.0",
+    "@norith/glimmer-tracking": "1.0.3",
     "@types/ember": "~4.0.0",
     "@types/ember-qunit": "~5.0.0",
     "@types/ember-testing-helpers": "^0.0.4",

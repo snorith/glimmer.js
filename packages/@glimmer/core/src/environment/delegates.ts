@@ -95,15 +95,22 @@ export abstract class BaseEnvDelegate implements EnvironmentDelegate {
   owner = {};
 
   onTransactionCommit(): void {
-    for (let i = 0; i < scheduledDestroyables.length; i++) {
-      scheduledDestructors[i](scheduledDestroyables[i]);
-    }
-
-    scheduledFinishDestruction.forEach((fn) => fn());
-
+    // Snapshot-and-clear BEFORE running anything: a destructor can itself destroy another root
+    // (which opens and commits a fresh transaction, re-entering this hook). With the arrays
+    // cleared first, the nested call drains only what IT scheduled; iterating the live arrays
+    // instead re-ran the outer destructors a second time (measured: willDestroy fired twice).
+    const destroyables = scheduledDestroyables;
+    const destructors = scheduledDestructors;
+    const finishers = scheduledFinishDestruction;
     scheduledDestroyables = [];
     scheduledDestructors = [];
     scheduledFinishDestruction = [];
+
+    for (let i = 0; i < destroyables.length; i++) {
+      destructors[i](destroyables[i]);
+    }
+
+    finishers.forEach((fn) => fn());
   }
 }
 

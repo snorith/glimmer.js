@@ -8,7 +8,6 @@
   },
   "author": "Tom Dale <tom@tomdale.net>",
   "license": "MIT",
-  "private": false,
   "scripts": {
     "test": "mocha -r esm --timeout 10000"
   },
