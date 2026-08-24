@@ -8,6 +8,7 @@ import {
   destroy,
   isDestroying,
   isDestroyed,
+  inTransaction,
 } from '@glimmer/runtime';
 import {
   Cursor as GlimmerCursor,
@@ -141,9 +142,10 @@ export default renderComponent;
  * component tree's destructors (`willDestroy` etc.), clears the rendered DOM,
  * and removes the result from the revalidation list so it no longer re-renders.
  *
- * Destruction is performed inside an environment transaction because the env
- * delegate only flushes scheduled destructors in `onTransactionCommit` — a bare
- * `destroy()` would schedule teardown that never runs.
+ * Destruction is performed inside an environment transaction (`inTransaction`,
+ * which reuses one already open) because the env delegate only flushes scheduled
+ * destructors in `onTransactionCommit` — a bare `destroy()` would schedule
+ * teardown that never runs.
  *
  * Idempotent: destroying an already-destroyed (or currently-destroying) result
  * is a no-op, so callers may combine per-test manual destruction with a blanket
@@ -159,10 +161,11 @@ export function destroyRenderResult(result: RenderResult): void {
     return;
   }
 
+  // `inTransaction` reuses an already-open transaction (destroy called from inside a render or
+  // another destructor) and opens+commits one otherwise — an unconditional begin() would throw
+  // mid-transaction. Destructors flush on commit either way.
   const { env } = result;
-  env.begin();
-  destroy(result);
-  env.commit();
+  inTransaction(env, () => destroy(result));
 }
 
 const results: RenderResult[] = [];
