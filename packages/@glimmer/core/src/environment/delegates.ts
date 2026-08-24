@@ -95,22 +95,26 @@ export abstract class BaseEnvDelegate implements EnvironmentDelegate {
   owner = {};
 
   onTransactionCommit(): void {
-    // Snapshot-and-clear BEFORE running anything: a destructor can itself destroy another root
-    // (which opens and commits a fresh transaction, re-entering this hook). With the arrays
-    // cleared first, the nested call drains only what IT scheduled; iterating the live arrays
-    // instead re-ran the outer destructors a second time (measured: willDestroy fired twice).
-    const destroyables = scheduledDestroyables;
-    const destructors = scheduledDestructors;
-    const finishers = scheduledFinishDestruction;
-    scheduledDestroyables = [];
-    scheduledDestructors = [];
-    scheduledFinishDestruction = [];
+    // Drain to QUIESCENCE, snapshotting each batch. Two hazards, both measured:
+    //  - a destructor can destroy another root, whose commit re-enters this hook: iterating the
+    //    live arrays re-ran the outer destructors (willDestroy fired twice) — the snapshot fixes
+    //    that, because the nested call sees cleared arrays and drains only its own batch;
+    //  - a destructor can call plain `destroy(other)` with NO transaction, scheduling work into
+    //    the just-cleared arrays: a single snapshot would strand it forever — the loop drains it.
+    while (scheduledDestroyables.length > 0 || scheduledFinishDestruction.length > 0) {
+      const destroyables = scheduledDestroyables;
+      const destructors = scheduledDestructors;
+      const finishers = scheduledFinishDestruction;
+      scheduledDestroyables = [];
+      scheduledDestructors = [];
+      scheduledFinishDestruction = [];
 
-    for (let i = 0; i < destroyables.length; i++) {
-      destructors[i](destroyables[i]);
+      for (let i = 0; i < destroyables.length; i++) {
+        destructors[i](destroyables[i]);
+      }
+
+      finishers.forEach((fn) => fn());
     }
-
-    finishers.forEach((fn) => fn());
   }
 }
 
